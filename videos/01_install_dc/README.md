@@ -24,6 +24,6 @@ Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
 
 # 02 Joining the Workstation to the domain
 
-```
+```shell
 Add-Computer -DomainName xyz.com -Credential xyz\Administrator -Restart -Force
 ```
