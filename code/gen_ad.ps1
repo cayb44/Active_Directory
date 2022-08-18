@@ -1,12 +1,23 @@
 param([Parameter(Mandatory=$true)] $JSONFile)
 
-function CreateADGroup(){
+function CreateADGroup()
+{
     param([Parameter(Mandatory=$true)] $groupObject)
 
     $name = $groupObject.name
-    New-ADGroup -name $name -GroupScope Global
+    New-ADGroup -Name $name -GroupScope Global
 }
-function CreateADUser(){
+
+function RemoveADGroup()
+{
+    param([Parameter(Mandatory=$true)] $groupObject)
+
+    $name = $groupObject.name
+    Remove-ADGroup -Identity $name -Confirm:$false
+}
+
+function CreateADUser()
+{
     param([Parameter(Mandatory=$true)] $userObject)
 
     # Pull out the name from the JSON object
@@ -38,14 +49,26 @@ function CreateADUser(){
     }
 }
 
+function WeakenPasswordPolicy()
+{
+    secedit /export /cfg C:\Windows\Tasks\secpol.cfg
+    (Get-Content C:\Windows\Tasks\secpol.cfg).Replace("PasswordComplexity = 1", "PasswordComplexity = 0").Replace("MinimumPasswordLength = 7", "MinimumPasswordLength = 1") | Out-File C:\Windows\Tasks\secpol.cfg
+    secedit /configure /db C:\Windows\Security\local.sdb /cfg C:\Windows\Tasks\secpol.cfg /areas SECURITY
+    Remove-Item -Force C:\Windows\Tasks\secpol.cfg -Confirm:$false
+}
+
+WeakenPasswordPolicy
+
 $json = (Get-Content $JSONFile | ConvertFrom-Json)
 
 $Global:Domain = $json.domain
 
-foreach($group in $json.groups){
+foreach($group in $json.groups)
+{
     CreateADGroup $group
 }
 
-foreach($user in $json.users){
+foreach($user in $json.users)
+{
     CreateADUser $user
 }

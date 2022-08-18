@@ -1,23 +1,34 @@
 {
     "domain": "xyz.com",
 
-    "groups": [
+    "groups" : [
         {
             "name": "Employees"
         }
     ],
 
     "users": [
+
         {
+            "local_admin": ["ws01"],
             "name": "Alice Lice",
-            "password": "P@ssw0rd789",
+            "password":"bubbles",
             "groups": [
                 "Employees"
             ]
         },
         {
+            "local_admin": ["ws02"],
             "name": "Bob Ob",
-            "password": "P@ssw0rdABC",
+            "password":"ashley",
+            "groups": [
+                "Employees"
+            ]
+        },
+        {
+            "local_admin": ["ws01", "ws02", "dc1"],
+            "name": "Charlie Harlie",
+            "password":"P@ssw0rdABC",
             "groups": [
                 "Employees"
             ]
